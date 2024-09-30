@@ -1,0 +1,23 @@
+{
+  "name": "ynab-cli",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dgrieser/ynab-cli.git"
+  },
+  "author": "dgrieser",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dgrieser/ynab-cli/issues"
+  },
+  "homepage": "https://github.com/dgrieser/ynab-cli#readme",
+  "description": "",
+  "dependencies": {
+    "yargs": "^17.7.2",
+    "ynab": "^2.6.0"
+  }
+}

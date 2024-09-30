@@ -37,17 +37,30 @@ const ynabAPI = new ynab.API(accessToken);
             name = category.name.trim().toLowerCase();
             for (let item of items) {
               if (name.startsWith(item.category.trim().toLowerCase())) {
-                // TODO: continue here
+                for (let sub of subtransactions) {
+                  if (sub.category_id === category.id) {
+                    // add amount to existing subtransaction
+                    sub.amount += item.amount * 1000;
+                    break;
+                  }
+                }
+                // add category to subtransactions
                 subtransactions.push({
-                  amount: c.sum * -1000,
+                  amount: item.amount * 1000,
                   category_id: category.id,
-                  //payee_id: payee.id,
                 });
                 break;
               }
             }
           }
         }
+      }
+    }
+
+    for (let sub of subtransactions) {
+      // negate amounts
+      if (sub.amount > 0) {
+        sub.amount *= -1;
       }
     }
 
