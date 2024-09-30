@@ -1,0 +1,5 @@
+#!/bin/bash
+
+node index.js $@
+
+#--payee="Joe's Market" --account="Test Account" --sum=50 --categories='[{"name": "groceries", "sum": 30},{"name": "transportation", "sum": 20}]'
