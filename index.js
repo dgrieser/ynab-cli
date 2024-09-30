@@ -9,8 +9,29 @@ const ynabAPI = new ynab.API(accessToken);
 
 (async function () {
   try {
+
+    // check if required arguments are provided
+    if (!argv.budget || !argv.receipt) {
+      console.log('Usage: ynab-cli --budget <budget_name> --receipt <receipt_json>');
+      process.exitCode = 1;
+      return; 
+    }
     const budgetName = argv.budget;
-    const receipt = JSON.parse(argv.receipt);
+    if (argv.receipt == '-') {
+      console.log('reading from stdin...');
+      // read from stdin
+      const receipt = require('fs').readFileSync(0, 'utf8');
+      argv.receipt = receipt;
+    }
+
+    let receipt;
+    try {
+      receipt = JSON.parse(argv.receipt);  
+    } catch (err) {
+        console.log("ERROR: Invalid JSON " + err);
+        process.exitCode = 1;
+        return;
+    }
 
     const payeeName = receipt.name;
     const paymentMethod = receipt.payment_method;
@@ -20,8 +41,22 @@ const ynabAPI = new ynab.API(accessToken);
     const budgetsResponse = await ynabAPI.budgets.getBudgets();
     const budget = budgetsResponse.data.budgets.find((budget) => budget.name === budgetName);
 
+    console.log("Working with budget: " + budgetName);
+
+    if (!budget) {
+      console.log('ERROR: Budget ' + budgetName + ' not found');
+      process.exitCode = 1;
+      return;
+    }
+
     const accountsResponse = await ynabAPI.accounts.getAccounts(budget.id);
-    const account = accountsResponse.data.accounts.find((account) => account.name === accountName);
+    const account = accountsResponse.data.accounts.find((account) => account.name === paymentMethod);
+
+    if (!account) {
+      console.log('ERROR: Account ' + paymentMethod + ' not found');
+      process.exitCode = 1;
+      return;
+    }
 
     const payeesResponse = await ynabAPI.payees.getPayees(budget.id);
     const payee = payeesResponse.data.payees.find((payee) => payee.name === payeeName);
